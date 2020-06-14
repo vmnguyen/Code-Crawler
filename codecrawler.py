@@ -9,14 +9,15 @@ from colored import fg, attr
 def print_banner():
 	print('[!] Manual source code review helper')
 
-def grep(filepath, regex):
+def grep(filepath, signature):
+    regex = ".*" + signature + ".*"
     regObj = re.compile(regex)
     res = []
     count = 0
     with open(filepath, encoding="utf8", errors='ignore') as f:
         for line in f:
             if regObj.match(line):
-                res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", ""))
+                res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", "").replace(signature, "{}" + signature + "{}", 1))
             count += 1
     return res
 
@@ -25,27 +26,27 @@ def find_files(path, regex):
     res = []
     for root, dirs, fnames in os.walk(path):
         for fname in fnames:
-            #print(fname)
-            if regObj.match(fname):
-                res.append(os.path.join(root, fname))
+            ref_dir = os.path.relpath(root, path)
+            if regObj.match(fname):			
+                res.append(os.path.join(ref_dir, fname))
                 #print(os.path.join(root, fname))
     return res
 
-def do_find(string, input_string):
+def do_find(signature):
 	global path_to_code
 	global files
 	for file in files:
 		if not (".svn" in file):
-			res = grep(file, ".*" + string + ".*")
+			res = grep(path_to_code + "/" +file, signature)
 			if res != []:
 				tmp = []
 				for i in res:
 					if ("import" not in i):
 						tmp.append(i)
 				if tmp != []:
-					print("Found %s'%s'%s at %s%s%s"  %(fg("green"), string, attr(0), fg("yellow"), file, attr(0)))
+					print("Found %s'%s'%s at %s%s%s"  %(fg("yellow"), signature, attr(0), fg("green"), file, attr(0)))
 					for i in tmp:
-						print(i.format(fg("red"), attr(0)))
+						print(i.format(fg("red"), attr(0), fg("yellow"), attr(0)))
 def convert_regrex(extension):
 	res = ".*("
 	for i in extension:
@@ -67,7 +68,7 @@ def load_config():
 		for i in vuln:
 			patterns = vuln[i]['pattern']
 			for pattern in patterns:
-				file = do_find(pattern,extension)
+				file = do_find(pattern)
 				#if (file != []):
 				#	print("[+] Found %s at:" % pattern)
 

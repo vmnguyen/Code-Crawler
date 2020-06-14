@@ -3,8 +3,7 @@
     "java":{
         "extension":[
             "java",
-            "jsp",
-            ""
+            "jsp"
         ],
         "vulnerability":
         {
@@ -183,27 +182,6 @@
                     "just4log",
                     "log4Ant",
                     "JDLabAgent"
-                ]
-            }
-        }
-    },
-    "net":{
-        "extension":[
-            "java",
-            "jsp",
-            "html"
-        ],
-        "vulnerability":
-        {
-            "specific":{
-                "id":0,
-                "name": "specific",
-                "pattern":[
-                    "ex.getMessage",
-                    "apiUser",
-                    "appraisal",
-                    "POST",
-                    "delete"
                 ]
             }
         }
