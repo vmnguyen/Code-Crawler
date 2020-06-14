@@ -3,6 +3,8 @@ import sys
 import json
 import re
 import argparse
+from colored import fg, attr
+
 
 def print_banner():
 	print('[!] Manual source code review helper')
@@ -14,7 +16,7 @@ def grep(filepath, regex):
     with open(filepath, encoding="utf8", errors='ignore') as f:
         for line in f:
             if regObj.match(line):
-                res.append(str(count + 1) + ": " + line)
+                res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", ""))
             count += 1
     return res
 
@@ -41,9 +43,9 @@ def do_find(string, input_string):
 					if ("import" not in i):
 						tmp.append(i)
 				if tmp != []:
-					print("Found '%s' at %s"  %(string,file))
+					print("Found %s'%s'%s at %s%s%s"  %(fg("green"), string, attr(0), fg("yellow"), file, attr(0)))
 					for i in tmp:
-						print(i)
+						print(i.format(fg("red"), attr(0)))
 def convert_regrex(extension):
 	res = ".*("
 	for i in extension:
