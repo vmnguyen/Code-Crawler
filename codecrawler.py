@@ -41,12 +41,16 @@ def find_files(path, regex):
     return res
 
 def do_find(signature, path_to_code, files):
+	result = {signature: []}
 	for file in files:
 		res = grep(path_to_code + "/" +file, signature)
 		if res != []:
 			print("Found %s'%s'%s at %s%s%s"  %(fg("yellow"), signature, attr(0), fg("green"), file, attr(0)))
 			for match in res:
 				print(match.format(fg("red"), attr(0), fg("yellow"), attr(0)))
+				# {file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))}
+				result[signature].append({ file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))})
+	return result
 
 def convert_regrex(extension):
 	res = ".*("
@@ -58,7 +62,7 @@ def convert_regrex(extension):
 
 def find_vuln(path_to_code, path_to_config):
 	print("[!] Finding pattern in your code")
-
+	result = {}
 	with open(path_to_config, "r") as config:
 		data = json.load(config)
 		language = "java"
@@ -70,17 +74,25 @@ def find_vuln(path_to_code, path_to_config):
 		for i in vuln:
 			patterns = vuln[i]['pattern']
 			for pattern in patterns:
-				do_find(pattern, path_to_code, files)
+				found = do_find(pattern, path_to_code, files)
+				if (found != {} ):
+					result.update(found)
+
+	return result
 
 def main():
 	parser = argparse.ArgumentParser(description="Path to source code folder")
 	parser.add_argument('--path',help="Path to source code folder")
 	parser.add_argument("--config", help="Path to config file")
+	parser.add_argument("--output", help="Save result to file")
+	parser.add_argument("--json", help="Save output as json file")
 	args = parser.parse_args()
 	path_to_code = args.path
 	path_to_config = args.config
+	path_to_output = args.output
+	is_json_type = args.json
 	print_banner()
 
-	find_vuln(path_to_code, path_to_config)
-
+	result = find_vuln(path_to_code, path_to_config)
+	print(result)
 main()
