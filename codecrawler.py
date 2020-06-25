@@ -17,14 +17,13 @@ def additional_condition(line):
 def grep(filepath, signature):
     regex = ".*" + signature + ".*"
     reg_obj = re.compile(regex)
-    res = []
     restmp = {}
     detail = []
     count = 0
     with open(filepath, encoding="utf8", errors='ignore') as f:
         for line in f:
             if reg_obj.match(line) and additional_condition(line):
-                res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", "").replace(signature, "{}" + signature + "{}", 1))
+                #res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", "").replace(signature, "{}" + signature + "{}", 1))
                 detail.append({str(count + 1) : line})
                 #print(detail)
             count += 1
@@ -40,7 +39,8 @@ def find_files(path, regex):
     for root, dirs, fnames in os.walk(path):
         for fname in fnames:
             ref_dir = os.path.relpath(root, path)
-            if reg_obj.match(fname) and (".svn" not in fname):			
+            if reg_obj.match(fname) and (".svn" not in fname):	
+                #print(fname)		
                 res.append(os.path.join(ref_dir, fname))
                 #print(os.path.join(root, fname))
 
@@ -51,15 +51,14 @@ def do_find(signature, path_to_code, files):
 	for file in files:
 		res = grep(path_to_code + "/" +file, signature)
 		if res != {}:
-			print("Found %s'%s'%s at %s%s%s"  %(fg("yellow"), signature, attr(0), fg("green"), file, attr(0)))
-			#print(res)
-				#print(match.format(fg("red"), attr(0), fg("yellow"), attr(0)))
-				# {file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))}
+			#print("Found %s'%s'%s at %s%s%s"  %(fg("yellow"), signature, attr(0), fg("green"), file, attr(0)))
+			#print(match.format(fg("red"), attr(0), fg("yellow"), attr(0)))
+			# {file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))}
 			result[signature].append(res)
 	return result
 
 def convert_regrex(extension):
-	res = ".*("
+	res = ".*\.("
 	for i in extension:
 		res += i + "|"
 	res = res[:-1] + ")"
@@ -67,7 +66,7 @@ def convert_regrex(extension):
 	return res
 
 def find_vuln(path_to_code, path_to_config):
-	print("[!] Finding pattern in your code")
+	#print("[!] Finding pattern in your code")
 	result = {}
 	with open(path_to_config, "r") as config:
 		data = json.load(config)
@@ -99,8 +98,8 @@ def main():
 	path_to_config = args.config
 	path_to_output = args.output
 	is_json_type = args.json
-	print_banner()
+	#print_banner()
 
 	result = find_vuln(path_to_code, path_to_config)
-	print(result)
+	print(json.dumps(result))
 main()
