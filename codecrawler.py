@@ -73,11 +73,13 @@ def find_vuln(path_to_code, path_to_config):
 
 		for i in vuln:
 			patterns = vuln[i]['pattern']
+			tmp = {i : []}
 			for pattern in patterns:
 				found = do_find(pattern, path_to_code, files)
 				if (found != {} ):
-					result.update(found)
-
+					tmp[i].append((found))
+					result.update(tmp)
+			#print(tmp)
 	return result
 
 def main():
