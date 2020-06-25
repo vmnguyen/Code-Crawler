@@ -18,14 +18,20 @@ def grep(filepath, signature):
     regex = ".*" + signature + ".*"
     reg_obj = re.compile(regex)
     res = []
+    restmp = {}
+    detail = []
     count = 0
-
     with open(filepath, encoding="utf8", errors='ignore') as f:
         for line in f:
             if reg_obj.match(line) and additional_condition(line):
                 res.append("{}" + str(count + 1) +"{}" + ": " + line.replace("{", "").replace("}", "").replace(signature, "{}" + signature + "{}", 1))
+                detail.append({str(count + 1) : line})
+                #print(detail)
             count += 1
-    return res
+        if (detail != []):
+            restmp = {filepath : detail}
+
+    return restmp
 
 def find_files(path, regex):
     reg_obj = re.compile(regex)
@@ -44,12 +50,12 @@ def do_find(signature, path_to_code, files):
 	result = {signature: []}
 	for file in files:
 		res = grep(path_to_code + "/" +file, signature)
-		if res != []:
+		if res != {}:
 			print("Found %s'%s'%s at %s%s%s"  %(fg("yellow"), signature, attr(0), fg("green"), file, attr(0)))
-			for match in res:
-				print(match.format(fg("red"), attr(0), fg("yellow"), attr(0)))
+			#print(res)
+				#print(match.format(fg("red"), attr(0), fg("yellow"), attr(0)))
 				# {file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))}
-				result[signature].append({ file : match.format(fg("red"), attr(0), fg("yellow"), attr(0))})
+			result[signature].append(res)
 	return result
 
 def convert_regrex(extension):
