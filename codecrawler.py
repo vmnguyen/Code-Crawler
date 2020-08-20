@@ -94,9 +94,11 @@ def find_vuln(path_to_code, path_to_config):
 	return result
 
 def save_result(path_to_output, result):
-	fileobject = open(path_to_output, "w")
-	json.dump(result, fileobject)
-	fileobject.close()
+	if (path_to_output is not None):
+		fileobject = open(path_to_output, "w")
+		json.dump(result, fileobject)
+		fileobject.close()
+		print("Save result to: " + path_to_output)
 
 def print_exit():
 	print("%s[!]%s Finished scan the source code." % (fg("green"), attr(0)))
