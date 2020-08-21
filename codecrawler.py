@@ -81,12 +81,12 @@ def convert_regrex(extension):
 	return res
 
 
-def find_vuln(path_to_code, path_to_config):
+def find_vuln(language,path_to_code, path_to_config):
 	print("[!] Finding pattern in your code")
 	result = {}
 	with open(path_to_config, "r") as config:
 		data = json.load(config)
-		language = "java"
+		# language = "java"
 		vuln = data['language'][language]['vulnerability']
 		extension = data['language'][language]['extension']
 		extension = convert_regrex(extension)
@@ -94,6 +94,7 @@ def find_vuln(path_to_code, path_to_config):
 
 		for i in vuln:
 			patterns = vuln[i]['pattern']
+			print("[i] Check Vulnerability: %s%s%s" % (fg("yellow"),vuln[i]['name'], attr(0)))
 			tmp = {i: []}
 			for pattern in patterns:
 				found = do_find(pattern, path_to_code, files)
@@ -118,16 +119,19 @@ def print_exit():
 
 def main():
 	parser = argparse.ArgumentParser(description="Path to source code folder")
-	parser.add_argument('--path', help="Path to source code folder", required=True)
-	parser.add_argument("--config", help="Path to config file", required=True)
-	parser.add_argument("--output", help="Save result to file")
+	parser.add_argument('--path','-p', help="Path to source code folder", required=True)
+	parser.add_argument("--config",'-c', help="Path to config file", required=True)
+	parser.add_argument("--language",'-l', help="Language ex: java, javascript ...", required=True)
+	parser.add_argument("--output",'-o', help="Save result to file")
+
 	args, leftovers = parser.parse_known_args()
 	path_to_code = args.path
 	path_to_config = args.config
 	path_to_output = args.output
+	language = args.language.lower()
 
 	print_banner()
-	result = find_vuln(path_to_code, path_to_config)
+	result = find_vuln(language,path_to_code, path_to_config)
 	if (path_to_output is not None):
 		save_result(path_to_output, result)
 	print_exit()
