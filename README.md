@@ -13,6 +13,7 @@ optional arguments:
   --config CONFIG  Path to config file
   --output OUTPUT  Save result to file
   --json JSON      Save output as json file
+  --language LANGUAGE Language ex: java, javascript ...
 ```
 
 [![asciicast](https://asciinema.org/a/eiYnyf3yql2anO7rEX3lazP7s.svg)](https://asciinema.org/a/eiYnyf3yql2anO7rEX3lazP7s)
