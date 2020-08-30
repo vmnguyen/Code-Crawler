@@ -123,15 +123,21 @@ def main():
 	parser.add_argument("--config",'-c', help="Path to config file", required=True)
 	parser.add_argument("--language",'-l', help="Language ex: java, javascript ...", required=True)
 	parser.add_argument("--output",'-o', help="Save result to file")
+	parser.add_argument("--keyword",'-k', help="Search by one keyword")
 
 	args, leftovers = parser.parse_known_args()
 	path_to_code = args.path
 	path_to_config = args.config
 	path_to_output = args.output
 	language = args.language.lower()
-
+	keyword = args.keyword
+	
 	print_banner()
-	result = find_vuln(language,path_to_code, path_to_config)
+	
+	if (keyword is not None):
+		result = find_vuln_by_keyword(language, path_to_code, keyword)
+	else:
+		result = find_vuln(language,path_to_code, path_to_config)
 	if (path_to_output is not None):
 		save_result(path_to_output, result)
 	print_exit()
