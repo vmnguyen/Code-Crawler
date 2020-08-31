@@ -104,6 +104,12 @@ def find_vuln(language,path_to_code, path_to_config):
 			#print(tmp)
 	return result
 
+def find_vuln_by_keyword(path_to_code, keyword):
+	print("[!] Finding pattern in your code by keyword")
+	files = find_files(path_to_code, ".")
+	found = do_find(keyword, path_to_code, files)
+	print(found)
+
 
 def save_result(path_to_output, result):
 	
@@ -120,8 +126,8 @@ def print_exit():
 def main():
 	parser = argparse.ArgumentParser(description="Path to source code folder")
 	parser.add_argument('--path','-p', help="Path to source code folder", required=True)
-	parser.add_argument("--config",'-c', help="Path to config file", required=True)
-	parser.add_argument("--language",'-l', help="Language ex: java, javascript ...", required=True)
+	parser.add_argument("--config",'-c', help="Path to config file", required=False)
+	parser.add_argument("--language",'-l', help="Language ex: java, javascript ...", required=False)
 	parser.add_argument("--output",'-o', help="Save result to file")
 	parser.add_argument("--keyword",'-k', help="Search by one keyword")
 
@@ -129,15 +135,15 @@ def main():
 	path_to_code = args.path
 	path_to_config = args.config
 	path_to_output = args.output
-	language = args.language.lower()
+	language = args.language
 	keyword = args.keyword
 	
 	print_banner()
 	
 	if (keyword is not None):
-		result = find_vuln_by_keyword(language, path_to_code, keyword)
+		result = find_vuln_by_keyword(path_to_code, keyword)
 	else:
-		result = find_vuln(language,path_to_code, path_to_config)
+		result = find_vuln(language, path_to_code, path_to_config)
 	if (path_to_output is not None):
 		save_result(path_to_output, result)
 	print_exit()
